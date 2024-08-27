@@ -2,7 +2,11 @@
 edition = "2021"
 name = "rust-dpdk-sys"
 version = "0.1.22110"
-authors = ["Keunhong Lee <dlrmsghd@gmail.com>", "Jeehoon Kang <jeehoon.kang@kaist.ac.kr>", "ANLAB <support@an.kaist.ac.kr>"]
+authors = [
+    "Keunhong Lee <dlrmsghd@gmail.com>",
+    "Jeehoon Kang <jeehoon.kang@kaist.ac.kr>",
+    "ANLAB <support@an.kaist.ac.kr>",
+]
 
 homepage = "https://github.com/ANLAB-KAIST/rust-dpdk"
 repository = "https://github.com/ANLAB-KAIST/rust-dpdk"
@@ -15,14 +19,15 @@ Rust binding for Intel DPDK.
 """
 
 [build-dependencies]
-bindgen = "0.65"
-num_cpus = "1"
 regex = "1"
-clang = { version = "1", features = ["runtime", "clang_3_9"] }
+bindgen = "0.70.1"
+num_cpus = "1"
+clang = { version = "2.0.0", features = ["runtime", "clang_3_9"] }
 cc = "1"
 etrace = "1"
-itertools = "0.10"
+itertools = "0.13.0"
 crossbeam-queue = "0.3"
+pkg-config = "0.3.30"
 
 [features]
 default = ["constants_cache"]

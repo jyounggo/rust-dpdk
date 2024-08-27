@@ -4,6 +4,7 @@ extern crate clang;
 extern crate etrace;
 extern crate itertools;
 extern crate num_cpus;
+extern crate pkg_config;
 extern crate regex;
 
 use etrace::some_or;
@@ -176,17 +177,15 @@ impl State {
     /// This function validates whether DPDK is installed.
     fn find_dpdk(&mut self) {
         // To find correct lib path of this platform.
-        let output = Command::new("cc")
-            .args(["-dumpmachine"])
-            .output()
-            .expect("failed obtain current machine");
-        let machine_string = String::from(String::from_utf8(output.stdout).unwrap().trim());
-        let config_header = PathBuf::from("/usr/local/include/rte_config.h");
-        let build_config_header = PathBuf::from("/usr/local/include/rte_build_config.h");
+        let libdpdk_pkg = pkg_config::probe_library("libdpdk").unwrap();
+        let mut config_header = libdpdk_pkg.include_paths[0].clone();
+        config_header.push("rte_config.h");
+        let mut build_config_header = libdpdk_pkg.include_paths[0].clone();
+        build_config_header.push("rte_build_config.h");
 
         if config_header.exists() && build_config_header.exists() {
-            self.include_path = Some(PathBuf::from("/usr/local/include"));
-            self.library_path = Some(PathBuf::from(format!("/usr/local/lib/{}", machine_string)));
+            self.include_path = Some(libdpdk_pkg.include_paths[0].clone());
+            self.library_path = Some(libdpdk_pkg.link_paths[0].clone());
         } else {
             panic!(
                 "DPDK is not installed on your system! (Cannot find {} nor {})",
